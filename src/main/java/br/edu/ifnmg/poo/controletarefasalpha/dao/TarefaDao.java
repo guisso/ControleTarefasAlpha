@@ -79,22 +79,6 @@ public class TarefaDao extends AbstractDao<Tarefa, Long> {
     }
 
     /**
-     * Insere o valor da chave primária na senteça SQL específica para seu uso.
-     *
-     * @param pstmt Declaração previamente preparada.
-     * @param id Chave primária a ser inserida na sentença SQL.
-     */
-    @Override
-    public void ajustarIdDeclaracao(PreparedStatement pstmt, Long id) {
-        try {
-            // TODO Rever procedimento para suportar tipo genérico "K"
-            pstmt.setLong(1, id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Insere os valores do objeto na senteça SQL específica para inserção ou
      * atualização de registros no banco de dados.
      *
