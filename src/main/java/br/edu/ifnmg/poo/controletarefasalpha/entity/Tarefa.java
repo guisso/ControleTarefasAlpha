@@ -115,11 +115,7 @@ public class Tarefa extends Entidade {
      */
     @Override
     public String toString() {
-        return descricao;
-
-//        return "Tarefa{" + "id=" + getId() 
-//                + ", descricao=" + descricao 
-//                + ", concluida=" + concluida + '}';
+        return descricao + (concluida ? " [Concluída]" : " [Pendente]");
     }
 
 }
