@@ -6,15 +6,15 @@
  */
 package br.edu.ifnmg.poo.controletarefasalpha.dao;
 
-import br.edu.ifnmg.poo.controletarefasalpha.dao.ConexaoBd;
 import br.edu.ifnmg.poo.controletarefasalpha.entity.Entidade;
-import br.edu.ifnmg.poo.controletarefasalpha.entity.Entidade;
-import br.edu.ifnmg.poo.controletarefasalpha.dao.IDao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe abstrata para generalização de operações com banco de dados.
@@ -27,10 +27,11 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
     /**
      * Executa o procedimento de salvamento (inserção ou atualização) do objeto
      * mapeado no banco de dados.
-     * 
+     *
      * @param o Objeto a ser salvo no banco de dados.
      * @return Valor da chave primária gerada pela inclusão de um novo registro
-     * ou mesmo valor da chave primária do objeto original presistido anteriormente.
+     * ou mesmo valor da chave primária do objeto original presistido
+     * anteriormente.
      */
     @Override
     public K salvar(T o) {
@@ -80,10 +81,10 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
                 // Prepara a declaração com os dados do objeto passado
                 montarDeclaracao(pstmt, o);
-                
+
                 // Executa o comando SQL
                 pstmt.executeUpdate();
-                
+
                 // Retorno da mesma id recebida com o objeto para manter
                 // compatibilidade com o procedimento do método
                 // TODO Retorno imediato (return ...)?
@@ -101,7 +102,7 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
     /**
      * Exclui o registro do objeto no banco de dados.
-     * 
+     *
      * @param o Objeto a ser excluído.<br>
      * <i>OBS.: o único valor útil é a identidade do objeto mapeado.</i>
      * @return Condição de sucesso ou falha na exclusão.
@@ -121,7 +122,7 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
                 // Prepara a declaração com os dados do objeto passado
                 ajustarIdDeclaracao(pstmt, (K) id);
-                
+
                 // Executa o comando SQL
                 pstmt.executeUpdate();
 
@@ -139,7 +140,7 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
     /**
      * Recupera um dado objeto mapeado para o banco de dados por meio de sua
      * chave de identidade.
-     * 
+     *
      * @param id Identidade do objeto.
      * @return Objeto segundo registro persistido.
      */
@@ -156,7 +157,7 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
             // Prepara a declaração com os dados do objeto passado
             ajustarIdDeclaracao(pstmt, id);
-            
+
             // Executa o comando SQL
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -175,12 +176,15 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
     }
 
     /**
-     * Recupera todos os objetos mapeados para o banco de dados do tipo específico.
-     * @return Lista (geralmente um <code>ArrayList<T></code>) de objetos persistidos.
+     * Recupera todos os objetos mapeados para o banco de dados do tipo
+     * específico.
+     *
+     * @return Lista (geralmente um <code>ArrayList<T></code>) de objetos
+     * persistidos.
      */
     @Override
     public List<T> localizarTodos() {
-        
+
         // Declara referência para reter o(s) objeto(s) a ser(em) recuperado(s)
         List<T> objetos = new ArrayList<>();
 
@@ -192,7 +196,7 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
             // Executa o comando SQL
             ResultSet resultSet = pstmt.executeQuery();
-            
+
             // Extrai objeto(s) do(s) respectivo(s) registro(s) do banco de dados
             objetos = extrairObjetos(resultSet);
 
@@ -206,52 +210,71 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
     }
 
     /**
-     * Recupera a sentença SQL específica para a inserção da entidade no banco de dados.
-     * 
+     * Recupera a sentença SQL específica para a inserção da entidade no banco
+     * de dados.
+     *
      * @return Sentença SQl para inserção.
      */
     public abstract String getDeclaracaoInsert();
 
     /**
-     * Recupera a sentença SQL específica para a busca da entidade no banco de dados.
-     * 
+     * Recupera a sentença SQL específica para a busca da entidade no banco de
+     * dados.
+     *
      * @return Sentença SQl para busca por entidade.
      */
     public abstract String getDeclaracaoSelectPorId();
 
     /**
-     * Recupera a sentença SQL específica para a busca das entidades no banco de dados.
-     * 
+     * Recupera a sentença SQL específica para a busca das entidades no banco de
+     * dados.
+     *
      * @return Sentença SQl para busca por entidades.
      */
     public abstract String getDeclaracaoSelectTodos();
 
     /**
-     * Recupera a sentença SQL específica para a atualização da entidade no banco de dados.
-     * 
+     * Recupera a sentença SQL específica para a atualização da entidade no
+     * banco de dados.
+     *
      * @return Sentença SQl para atualização.
      */
     public abstract String getDeclaracaoUpdate();
 
     /**
-     * Recupera a sentença SQL específica para a exclusão da entidade no banco de dados.
-     * 
+     * Recupera a sentença SQL específica para a exclusão da entidade no banco
+     * de dados.
+     *
      * @return Sentença SQl para exclusão.
      */
     public abstract String getDeclaracaoDelete();
 
     /**
      * Insere o valor da chave primária na senteça SQL específica para seu uso.
-     * 
+     *
      * @param pstmt Declaração previamente preparada.
      * @param id Chave primária a ser inserida na sentença SQL.
      */
-    public abstract void ajustarIdDeclaracao(PreparedStatement pstmt, K id);
+    public void ajustarIdDeclaracao(PreparedStatement pstmt, K id) {
+        try {
+            // Caso id seja um Long, emprega setLong()
+            if(id instanceof Long) {
+                // Cast é requerido porque K não é um tipo previamente definido
+                pstmt.setLong(1, (Long) id);
+            } else {
+                // Caso id seja um Integer, emprega setLong()
+                pstmt.setInt(1, (Integer) id);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
-     * Insere os valores do objeto na senteça SQL específica para inserção 
-     * ou atualização de registros no banco de dados.
-     * 
+     * Insere os valores do objeto na senteça SQL específica para inserção ou
+     * atualização de registros no banco de dados.
+     *
      * @param pstmt Declaração previamente preparada.
      * @param id Chave primária a ser inserida na sentença SQL.
      */
@@ -259,16 +282,18 @@ public abstract class AbstractDao<T, K> implements IDao<T, K> {
 
     /**
      * Cria objeto a partir do registro fornecido pelo banco de dados.
-     * 
+     *
      * @param resultSet Resultado proveniente do banco de dados relacional.
      * @return Objeto constituído.
      */
     public abstract T extrairObjeto(ResultSet resultSet);
 
     /**
-     * Cria objeto(s) a partir do(s) registro(s) fornecido(s) pelo banco de dados.
-     * 
-     * @param resultSet Resultado(s) proveniente(s) do banco de dados relacional.
+     * Cria objeto(s) a partir do(s) registro(s) fornecido(s) pelo banco de
+     * dados.
+     *
+     * @param resultSet Resultado(s) proveniente(s) do banco de dados
+     * relacional.
      * @return Lista de objeto(s) constituído(s).
      */
     public abstract List<T> extrairObjetos(ResultSet resultSet);
