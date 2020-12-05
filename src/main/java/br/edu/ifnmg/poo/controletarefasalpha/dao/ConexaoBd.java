@@ -6,35 +6,41 @@
  */
 package br.edu.ifnmg.poo.controletarefasalpha.dao;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Tratamento da conexão com o banco de dados.
- * 
+ *
  * @author Luis Guisso <luis dot guisso at ifnmg dot edu dot br>
  * @version 0.0.1, 29/11/2020
  */
 public class ConexaoBd {
 
     /**
-     * URL de conexão com o banco de dados (protocolo/sgbd/ip/porta/banco/parâmetros).
+     * URL de conexão com o banco de dados
+     * (protocolo/sgbd/ip/porta/banco/parâmetros).
      */
     public static final String URL;
-    
+
     /**
-     * Retém a conexão estabelecida com o banco de dados durante a operação do sistema.
+     * Retém a conexão estabelecida com o banco de dados durante a operação do
+     * sistema.
      */
     private static Connection conexao;
-    
+
     /**
      * Usuário para acesso ao banco de dados.
      */
     private static String usuario;
-    
+
     /**
      * Senha para acesso ao banco de dados.
      */
@@ -44,15 +50,48 @@ public class ConexaoBd {
      * Inicialização de valores estáticos.
      */
     static {
-        URL = "jdbc:mysql://127.0.0.1:3306/tarefas?useUnicode=true&useJDBCCompliantTimezoneShift=true&serverTimezone=UTC";
-        usuario = "root";
-        senha = "";
+        if (true) {
+            // Servidor Local
+            URL = "jdbc:mysql://127.0.0.1:3306/tarefas"
+                    + "?useUnicode=true"
+                    + "&useJDBCCompliantTimezoneShift=true"
+                    + "&serverTimezone=UTC"
+                    + "&autoReconnect=true";
+            usuario = "root";
+            senha = "";
+
+        } else {
+            // Servidor remoto
+            Properties prop = new Properties();
+            String propFileName = "remotemysql.properties";
+
+            InputStream inputStream = ConexaoBd.class.getClassLoader()
+                    .getResourceAsStream(propFileName);
+
+            if (inputStream != null) {
+                try {
+                    prop.load(inputStream);
+                } catch (IOException ex) {
+                    Logger.getLogger(ConexaoBd.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                System.out.println("Arquivo de propriedades '" + propFileName
+                        + "' não encontrado no classpath");
+                System.exit(0);
+            }
+
+            URL = prop.getProperty("url");
+            usuario = prop.getProperty("user");
+            senha = prop.getProperty("password");
+        }
+
     }
 
     //<editor-fold defaultstate="collapsed" desc="Construtor privado">
     /**
      * Construtor privado para forçar acesso à conexão pelo membro estático
-     * <code>getConexao()</code> sem que sejam gerados novos objetos "ConexaoBd".
+     * <code>getConexao()</code> sem que sejam gerados novos objetos
+     * "ConexaoBd".
      */
     private ConexaoBd() {
     }
@@ -78,7 +117,7 @@ public class ConexaoBd {
 
     /**
      * Estabele e gera a retenção da conexão com o banco de dados.
-     * 
+     *
      * @return Conexão com o banco de dados.
      */
     public static Connection getConexao() {
@@ -97,7 +136,7 @@ public class ConexaoBd {
                 Logger.getLogger(ConexaoBd.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         // Devolve a conexão estabelecida
         return conexao;
 
