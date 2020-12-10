@@ -21,7 +21,7 @@ import javax.swing.DefaultListModel;
 public class CadastroTarefa extends javax.swing.JFrame {
 
     /**
-     * Modelo para manutenção de dados a serem apresentado na listagem da
+     * Modelo para manutenção de dados a serem apresentados na listagem da
      * interface gráfica.
      */
     private DefaultListModel<Tarefa> lstTarefasModel;

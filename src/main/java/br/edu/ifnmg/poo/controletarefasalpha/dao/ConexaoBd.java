@@ -52,11 +52,7 @@ public class ConexaoBd {
     static {
         if (true) {
             // Servidor Local
-            URL = "jdbc:mysql://127.0.0.1:3306/tarefas"
-                    + "?useUnicode=true"
-                    + "&useJDBCCompliantTimezoneShift=true"
-                    + "&serverTimezone=UTC"
-                    + "&autoReconnect=true";
+            URL = "jdbc:mysql://127.0.0.1:3306/tarefas?useUnicode=true&useJDBCCompliantTimezoneShift=true&serverTimezone=UTC&autoReconnect=true";
             usuario = "root";
             senha = "";
 
