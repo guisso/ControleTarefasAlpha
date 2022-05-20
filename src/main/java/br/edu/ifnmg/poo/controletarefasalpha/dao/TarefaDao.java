@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @author Luis Guisso <luis dot guisso at ifnmg dot edu dot br>
  * @version 0.0.1, 30/11/2020
  */
-public class TarefaDao extends AbstractDao<Tarefa, Long> {
+public class TarefaDao extends Dao<Tarefa, Long> {
 
     /**
      * Recupera a sentença SQL específica para a inserção da entidade no banco
