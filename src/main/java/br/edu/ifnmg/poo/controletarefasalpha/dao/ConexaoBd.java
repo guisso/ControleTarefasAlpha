@@ -6,7 +6,6 @@
  */
 package br.edu.ifnmg.poo.controletarefasalpha.dao;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -53,7 +52,7 @@ public class ConexaoBd {
         if (true) {
             // Servidor Local
             URL = "jdbc:mysql://127.0.0.1:3306/tarefas"
-                    + "?useUnicode=true"
+                    + "?useUnicodem=true"
                     + "&useJDBCCompliantTimezoneShift=true"
                     + "&serverTimezone=UTC"
                     + "&autoReconnect=true";
