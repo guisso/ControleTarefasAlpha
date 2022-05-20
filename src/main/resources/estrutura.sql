@@ -16,3 +16,14 @@ CREATE TABLE `tarefa` (
   KEY `responsavel_id` (`responsavel_id`),
   CONSTRAINT `tarefa_ibfk_1` FOREIGN KEY (`responsavel_id`) REFERENCES `responsavel` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+
+insert into responsavel (id, nome, email) values (default, ?, ?);
+
+update responsavel set nome = ?, email = ? where id = ?;
+
+select id, nome, email from responsavel;
+
+select * from responsavel where id = ?;
+
+delete from responsavel where id = ?;
